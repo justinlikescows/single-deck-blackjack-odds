@@ -1,0 +1,111 @@
+:root {
+  --bg: #06310f; /* deep green felt backdrop */
+  --felt: #0e5a1a; /* table felt */
+  --panel: rgba(0, 0, 0, 0.25);
+  --accent: #ffd166;
+  --accent-2: #ffe29a;
+  --text: #f7f7f7;
+  --muted: #c7d3c8;
+  --danger: #ff6b6b;
+  --success: #2dd36f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: radial-gradient(1200px 600px at 50% -10%, #0d4a17 0%, var(--bg) 60%);
+  color: var(--text);
+}
+
+.app { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+.app__header, .app__footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+
+h1 { margin: 8px 0; font-size: 28px; }
+h2 { margin: 0 0 8px; font-size: 20px; }
+h3 { margin: 0 0 12px; font-size: 18px; }
+h4 { margin: 12px 0 6px; }
+
+.controls__row { display: flex; gap: 8px; align-items: center; }
+
+label { color: var(--muted); }
+select, button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid #2d365a;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.secondary { background: transparent; border-color: #3a456f; }
+
+.table { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+
+.dealer, .player, .dashboard {
+  background: var(--panel);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 12px;
+  backdrop-filter: blur(4px);
+}
+
+.section__header { display: flex; align-items: baseline; justify-content: space-between; }
+.hand-value { color: var(--accent-2); font-weight: 600; }
+.hand-summary { display: flex; gap: 10px; align-items: baseline; }
+
+.cards { display: flex; flex-wrap: wrap; gap: 8px; min-height: 96px; padding: 12px; background: radial-gradient(900px 400px at 20% -10%, #0f6e21 0%, var(--felt) 55%); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); }
+.player .cards { margin-top: 6px; }
+.hand { border: 2px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px; margin-bottom: 10px; background: rgba(0,0,0,0.18); }
+.hand__header { display: flex; align-items: baseline; justify-content: space-between; color: var(--muted); margin-bottom: 6px; }
+.hand--active { outline: 3px solid var(--accent); box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.25) inset; }
+.card {
+  width: 56px; height: 80px; border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.5); background: white;
+  display: grid; place-items: center;
+  color: #0a0a0a;
+  font-weight: 800; font-size: 18px;
+  box-shadow: 0 6px 10px rgba(0,0,0,0.5);
+  transform-origin: center;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.card.red { color: #b80000; }
+.card.back { background: repeating-linear-gradient(45deg, #002b5b, #002b5b 6px, #012447 6px, #012447 12px); color: transparent; }
+.card.dealt { transform: translateY(-6px) scale(1.03); box-shadow: 0 10px 16px rgba(0,0,0,0.6); }
+.card.flip { animation: flipCard .5s ease both; }
+
+@keyframes flipCard {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+.actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.message { margin-top: 10px; min-height: 24px; color: var(--accent); }
+
+.dashboard.hidden { display: none; }
+.dash-row { display: flex; gap: 12px; flex-wrap: wrap; color: var(--muted); }
+.dash-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+.dash-item { background: rgba(255,255,255,0.04); border: 1px solid #2d365a; border-radius: 8px; padding: 8px; }
+.dash-item strong { color: var(--accent-2); }
+.out-cards #cardsOut { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; border: 1px solid #2d365a; background: rgba(0,0,0,0.25); }
+
+.bankroll { display: flex; gap: 16px; margin: 8px 0 6px; color: var(--muted); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.chip-btn { background: #c53030; border-color: #7a1e1e; }
+.chip-btn:nth-child(2) { background: #1d4ed8; border-color: #153d9b; }
+.chip-btn:nth-child(3) { background: #059669; border-color: #04684a; }
+.chip-btn:nth-child(4) { background: #8757ff; border-color: #5b3ab8; }
+.chip-btn, #clearBetBtn { color: white; font-weight: 700; box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
+
+@media (max-width: 900px) {
+  .table { grid-template-columns: 1fr; }
+}
+
+

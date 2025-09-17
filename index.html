@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Single Deck Blackjack Simulator</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <h1>Single Deck Blackjack</h1>
+        <div class="controls__row">
+          <label for="reshuffleSelect">Reshuffle after</label>
+          <select id="reshuffleSelect">
+            <option value="4">4 hands</option>
+            <option value="5" selected>5 hands</option>
+          </select>
+          <button id="toggleDashboardBtn" class="secondary">Toggle Dashboard</button>
+        </div>
+      </header>
+
+      <main class="table">
+        <section class="dealer">
+          <div class="section__header">
+            <h2>Dealer</h2>
+            <div class="hand-value" id="dealerValue"></div>
+          </div>
+          <div class="cards" id="dealerCards"></div>
+        </section>
+
+        <section class="player">
+          <div class="section__header">
+            <h2>Player</h2>
+            <div class="hand-summary">
+              <span id="handIndexLabel"></span>
+              <span class="hand-value" id="playerValue"></span>
+            </div>
+          </div>
+          <div class="bankroll">
+            <div><strong>Bankroll:</strong> $<span id="bankroll">1000.00</span></div>
+            <div><strong>Bet:</strong> $<span id="pendingBet">0.00</span></div>
+          </div>
+          <div class="chips">
+            <button class="chip-btn" data-chip="1">$1</button>
+            <button class="chip-btn" data-chip="5">$5</button>
+            <button class="chip-btn" data-chip="25">$25</button>
+            <button class="chip-btn" data-chip="100">$100</button>
+            <button id="clearBetBtn" class="secondary">Clear Bet</button>
+          </div>
+          <div class="cards" id="playerCards"></div>
+
+          <div class="actions">
+            <button id="dealBtn">Deal</button>
+            <button id="hitBtn" disabled>Hit</button>
+            <button id="standBtn" disabled>Stand</button>
+            <button id="doubleBtn" disabled>Double</button>
+            <button id="splitBtn" disabled>Split</button>
+            <button id="newRoundBtn" class="secondary" disabled>New Round</button>
+          </div>
+
+          <div class="message" id="message"></div>
+        </section>
+
+        <aside class="dashboard hidden" id="dashboard">
+          <h3>Counting Dashboard</h3>
+          <div class="dash-row">
+            <div><strong>Deck size:</strong> <span id="deckSize"></span></div>
+            <div><strong>Cards dealt this shoe:</strong> <span id="cardsDealt"></span></div>
+            <div><strong>Hands since reshuffle:</strong> <span id="handsSince"></span></div>
+          </div>
+          <div class="dash-grid" id="rankStats"></div>
+          <div class="out-cards">
+            <h4>Cards out</h4>
+            <div id="cardsOut"></div>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="app__footer">
+        <small>Rules: Double on 9-11 only. No doubling after splits. Max 3 splits (4 hands). Dealer stands on soft 17. Single deck.</small>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+  </html>
+
+
