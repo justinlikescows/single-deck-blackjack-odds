@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#06310f">
     <title>Single Deck Blackjack Simulator</title>
     <link rel="stylesheet" href="style.css">
   </head>
@@ -16,7 +19,6 @@
             <option value="4">4 hands</option>
             <option value="5" selected>5 hands</option>
           </select>
-          <button id="toggleDashboardBtn" class="secondary">Toggle Dashboard</button>
         </div>
       </header>
 
@@ -38,8 +40,15 @@
             </div>
           </div>
           <div class="bankroll">
-            <div><strong>Bankroll:</strong> $<span id="bankroll">1000.00</span></div>
+            <div><strong>Bankroll:</strong> $<span id="bankroll">500.00</span></div>
             <div><strong>Bet:</strong> $<span id="pendingBet">0.00</span></div>
+          </div>
+          <div class="count-section">
+            <div class="count-display">
+              <div><strong>Count:</strong> <span id="runningCount">0</span></div>
+              <div><strong>True Count:</strong> <span id="trueCount">0.0</span></div>
+            </div>
+            <button id="toggleCountBtn" class="secondary">Show Count</button>
           </div>
           <div class="chips">
             <button class="chip-btn" data-chip="1">$1</button>
@@ -78,12 +87,11 @@
       </main>
 
       <footer class="app__footer">
-        <small>Rules: Double on 9-11 only. No doubling after splits. Max 3 splits (4 hands). Dealer stands on soft 17. Single deck.</small>
+        <button id="toggleDashboardBtn" class="secondary">Toggle Dashboard</button>
       </footer>
     </div>
 
     <script src="app.js"></script>
   </body>
   </html>
-
 

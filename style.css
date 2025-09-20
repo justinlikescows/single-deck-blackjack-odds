@@ -8,6 +8,8 @@
   --muted: #c7d3c8;
   --danger: #ff6b6b;
   --success: #2dd36f;
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 * { box-sizing: border-box; }
@@ -17,19 +19,29 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background: radial-gradient(1200px 600px at 50% -10%, #0d4a17 0%, var(--bg) 60%);
   color: var(--text);
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
-.app { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.app { 
+  max-width: 1100px; 
+  margin: 0 auto; 
+  padding: 12px; 
+  min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+  min-height: calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+}
 
 .app__header, .app__footer {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap;
 }
 
-h1 { margin: 8px 0; font-size: 28px; }
-h2 { margin: 0 0 8px; font-size: 20px; }
-h3 { margin: 0 0 12px; font-size: 18px; }
-h4 { margin: 12px 0 6px; }
+h1 { margin: 8px 0; font-size: clamp(24px, 5vw, 28px); font-weight: 700; }
+h2 { margin: 0 0 8px; font-size: clamp(18px, 4vw, 20px); font-weight: 600; }
+h3 { margin: 0 0 12px; font-size: clamp(16px, 3.5vw, 18px); font-weight: 600; }
+h4 { margin: 12px 0 6px; font-size: clamp(14px, 3vw, 16px); font-weight: 600; }
 
 .controls__row { display: flex; gap: 8px; align-items: center; }
 
@@ -39,14 +51,29 @@ select, button {
   color: var(--text);
   border: 1px solid #2d365a;
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 12px 16px;
+  font-size: 16px; /* Prevents zoom on iOS */
+  min-height: 44px; /* Apple's recommended touch target size */
+  min-width: 44px;
 }
 
 button { cursor: pointer; }
 button:disabled { opacity: .5; cursor: not-allowed; }
 button.secondary { background: transparent; border-color: #3a456f; }
 
-.table { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+.table { 
+  display: grid; 
+  grid-template-columns: 1fr 320px; 
+  gap: 16px; 
+  align-items: start; 
+}
+
+@media (max-width: 768px) {
+  .table { 
+    grid-template-columns: 1fr; 
+    gap: 12px;
+  }
+}
 
 .dealer, .player, .dashboard {
   background: var(--panel);
@@ -66,11 +93,16 @@ button.secondary { background: transparent; border-color: #3a456f; }
 .hand__header { display: flex; align-items: baseline; justify-content: space-between; color: var(--muted); margin-bottom: 6px; }
 .hand--active { outline: 3px solid var(--accent); box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.25) inset; }
 .card {
-  width: 56px; height: 80px; border-radius: 8px;
-  border: 1px solid rgba(0,0,0,0.5); background: white;
-  display: grid; place-items: center;
+  width: clamp(48px, 12vw, 56px); 
+  height: clamp(68px, 17vw, 80px); 
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.5); 
+  background: white;
+  display: grid; 
+  place-items: center;
   color: #0a0a0a;
-  font-weight: 800; font-size: 18px;
+  font-weight: 800; 
+  font-size: clamp(14px, 3.5vw, 18px);
   box-shadow: 0 6px 10px rgba(0,0,0,0.5);
   transform-origin: center;
   transition: transform .25s ease, box-shadow .25s ease;
@@ -85,27 +117,384 @@ button.secondary { background: transparent; border-color: #3a456f; }
   100% { transform: rotateY(180deg); }
 }
 
-.actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.actions { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+  gap: 8px; 
+  margin-top: 12px; 
+}
+
+@media (max-width: 480px) {
+  .actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
 .message { margin-top: 10px; min-height: 24px; color: var(--accent); }
 
 .dashboard.hidden { display: none; }
 .dash-row { display: flex; gap: 12px; flex-wrap: wrap; color: var(--muted); }
-.dash-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+.dash-grid { 
+  display: grid; 
+  grid-template-columns: repeat(5, 1fr); 
+  gap: 8px; 
+  margin-top: 12px; 
+}
+
+@media (max-width: 768px) {
+  .dash-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+  }
+}
 .dash-item { background: rgba(255,255,255,0.04); border: 1px solid #2d365a; border-radius: 8px; padding: 8px; }
 .dash-item strong { color: var(--accent-2); }
 .out-cards #cardsOut { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; border: 1px solid #2d365a; background: rgba(0,0,0,0.25); }
 
 .bankroll { display: flex; gap: 16px; margin: 8px 0 6px; color: var(--muted); }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+
+.count-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 6px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.count-display {
+  display: none;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.count-enabled .count-display {
+  display: flex;
+}
+
+.count-display strong {
+  color: var(--accent-2);
+}
+
+#runningCount, #trueCount {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+#toggleCountBtn {
+  padding: 6px 12px;
+  font-size: 14px;
+  min-height: 36px;
+}
+
+.count-enabled #toggleCountBtn {
+  background: var(--success);
+  border-color: #1a9c4a;
+  color: white;
+}
+
+.count-enabled .count-display {
+  color: var(--text);
+}
+
+.count-enabled #runningCount, 
+.count-enabled #trueCount {
+  color: var(--accent-2);
+}
+.chips { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 8px; 
+  margin-bottom: 12px; 
+}
+
+@media (max-width: 480px) {
+  .chips {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
 .chip-btn { background: #c53030; border-color: #7a1e1e; }
 .chip-btn:nth-child(2) { background: #1d4ed8; border-color: #153d9b; }
 .chip-btn:nth-child(3) { background: #059669; border-color: #04684a; }
 .chip-btn:nth-child(4) { background: #8757ff; border-color: #5b3ab8; }
 .chip-btn, #clearBetBtn { color: white; font-weight: 700; box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
 
+/* Mobile-first responsive design */
 @media (max-width: 900px) {
   .table { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 768px) {
+  .app {
+    padding: 8px;
+  }
+  
+  .app__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .app__header h1 {
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  
+  .controls__row {
+    justify-content: center;
+  }
+  
+  .dealer, .player, .dashboard {
+    padding: 10px;
+  }
+  
+  .cards {
+    min-height: 80px;
+    padding: 8px;
+    gap: 6px;
+  }
+  
+  .hand {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .bankroll {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+  
+  .count-section {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  
+  .count-enabled .count-display {
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .dash-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .out-cards #cardsOut {
+    gap: 3px;
+  }
+  
+  .chip {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 6px;
+  }
+  
+  .app__header h1 {
+    font-size: 20px;
+    margin: 4px 0;
+  }
+  
+  .section__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .hand-summary {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .cards {
+    min-height: 70px;
+    padding: 6px;
+    gap: 4px;
+  }
+  
+  .hand {
+    padding: 6px;
+    margin-bottom: 6px;
+  }
+  
+  .hand__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  
+  .message {
+    font-size: 14px;
+    min-height: 20px;
+  }
+  
+  .dash-item {
+    padding: 6px;
+    font-size: 12px;
+  }
+  
+  .dash-item strong {
+    font-size: 13px;
+  }
+}
+
+/* Reshuffle Notification */
+.reshuffle-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  z-index: 1000;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  color: #000;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  max-width: 90vw;
+  width: 320px;
+}
+
+.reshuffle-notification.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.reshuffle-notification.hide {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.reshuffle-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.reshuffle-icon {
+  font-size: 32px;
+  animation: spin 1s ease-in-out;
+}
+
+.reshuffle-text {
+  flex: 1;
+}
+
+.reshuffle-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #000;
+}
+
+.reshuffle-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile optimizations for notification */
+@media (max-width: 480px) {
+  .reshuffle-notification {
+    width: 280px;
+    margin: 0 10px;
+  }
+  
+  .reshuffle-content {
+    padding: 16px 20px;
+    gap: 12px;
+  }
+  
+  .reshuffle-icon {
+    font-size: 28px;
+  }
+  
+  .reshuffle-title {
+    font-size: 16px;
+  }
+  
+  .reshuffle-subtitle {
+    font-size: 13px;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  .app {
+    padding: 4px;
+  }
+  
+  .cards {
+    min-height: 60px;
+    padding: 4px;
+  }
+  
+  .card {
+    width: 40px;
+    height: 56px;
+    font-size: 12px;
+  }
+  
+  .actions {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+  
+  .chips {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+  
+  .reshuffle-notification {
+    width: 260px;
+  }
+  
+  .reshuffle-content {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  
+  .reshuffle-icon {
+    font-size: 24px;
+  }
+  
+  .reshuffle-title {
+    font-size: 14px;
+  }
+  
+  .reshuffle-subtitle {
+    font-size: 12px;
+  }
+}
 

@@ -87,9 +87,11 @@
     handsPlayedInShoe: 0,
     reshuffleAfter: 5, // default
     roundOver: false,
-    bankroll: 1000,
+    bankroll: 500,
     pendingBet: 0,
     dealerHasBlackjack: false,
+    showCount: false,
+    runningCount: 0,
   };
 
   function resetShoe() {
@@ -97,6 +99,28 @@
     shuffleInPlace(state.fullDeck);
     state.discard = [];
     state.handsPlayedInShoe = 0;
+    state.runningCount = 0; // Reset count on reshuffle
+  }
+
+  // ---------- Card Counting Logic ----------
+  function getCardCountValue(rank) {
+    if (rank === 'A' || rank === 'K' || rank === 'Q' || rank === 'J' || rank === '10') {
+      return -1; // High cards subtract 1
+    } else if (rank === '2' || rank === '3' || rank === '4' || rank === '5' || rank === '6') {
+      return 1; // Low cards add 1
+    } else {
+      return 0; // 7, 8, 9 are neutral
+    }
+  }
+
+  function updateCount(card) {
+    const countValue = getCardCountValue(card.rank);
+    state.runningCount += countValue;
+  }
+
+  function getTrueCount() {
+    const remainingDecks = state.fullDeck.length / 52;
+    return remainingDecks > 0 ? state.runningCount / remainingDecks : 0;
   }
 
   // ---------- Dealing / Actions ----------
@@ -106,6 +130,13 @@
     card._fresh = true;
     card._visible = !!visible;
     state.discard.push(card);
+    
+    // Update count when card is dealt
+
+    if (card._visible) {
+        updateCount(card);
+    }
+
     if (card._visible) {
       playDealSound();
     }
@@ -144,7 +175,7 @@
       render();
       if (state.handsPlayedInShoe >= state.reshuffleAfter) {
         resetShoe();
-        setMessage('Shoe reshuffled. Odds reset.');
+        showReshuffleNotification();
       }
     }
   }
@@ -237,7 +268,7 @@
       render();
       if (state.handsPlayedInShoe >= state.reshuffleAfter) {
         resetShoe();
-        setMessage('Shoe reshuffled. Odds reset.');
+        showReshuffleNotification();
       }
       return;
     }
@@ -252,6 +283,7 @@
       await sleep(900);
       state.dealerHand[1]._visible = true;
       state.dealerHand[1]._fresh = true;
+      updateCount(state.dealerHand[1]);
       playDealSound();
       render();
       await sleep(700);
@@ -352,6 +384,9 @@
   const pendingBetEl = qs('#pendingBet');
   const clearBetBtn = qs('#clearBetBtn');
   const chipButtons = Array.from(document.querySelectorAll('.chip-btn'));
+  const runningCountEl = qs('#runningCount');
+  const trueCountEl = qs('#trueCount');
+  const toggleCountBtn = qs('#toggleCountBtn');
 
   // Dashboard els
   const dashboardEl = qs('#dashboard');
@@ -362,6 +397,36 @@
   const cardsOutEl = qs('#cardsOut');
 
   function setMessage(msg) { messageEl.textContent = msg || ''; }
+
+  function showReshuffleNotification() {
+    // Create a more prominent notification
+    const notification = document.createElement('div');
+    notification.className = 'reshuffle-notification';
+    notification.innerHTML = `
+      <div class="reshuffle-content">
+        <div class="reshuffle-icon">🔄</div>
+        <div class="reshuffle-text">
+          <div class="reshuffle-title">Shoe Reshuffled!</div>
+          <div class="reshuffle-subtitle">Count reset to 0 • Odds refreshed</div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.classList.add('hide');
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  }
 
   function renderCards(container, cards, revealAll) {
     container.innerHTML = '';
@@ -439,6 +504,12 @@
     // Bankroll/Bet UI
     if (bankrollEl) bankrollEl.textContent = state.bankroll.toFixed(2);
     if (pendingBetEl) pendingBetEl.textContent = state.pendingBet.toFixed(2);
+
+    // Count UI - only update if count is visible
+    if (state.showCount) {
+      if (runningCountEl) runningCountEl.textContent = state.runningCount;
+      if (trueCountEl) trueCountEl.textContent = getTrueCount().toFixed(1);
+    }
 
     updateDashboard();
   }
@@ -521,7 +592,7 @@
   dealBtn.addEventListener('click', () => {
     if (state.fullDeck.length < 4) {
       resetShoe();
-      setMessage('Shoe reshuffled (not enough cards).');
+      showReshuffleNotification();
     }
     dealInitial();
     render();
@@ -544,6 +615,20 @@
 
   toggleDashboardBtn.addEventListener('click', () => {
     dashboardEl.classList.toggle('hidden');
+  });
+
+  toggleCountBtn.addEventListener('click', () => {
+    state.showCount = !state.showCount;
+    
+    if (state.showCount) {
+      toggleCountBtn.textContent = 'Hide Count';
+      document.body.classList.add('count-enabled');
+    } else {
+      toggleCountBtn.textContent = 'Show Count';
+      document.body.classList.remove('count-enabled');
+    }
+    
+    render();
   });
 
   reshuffleSelect.addEventListener('change', (e) => {
@@ -575,5 +660,4 @@
   resetShoe();
   render();
 })();
-
 
